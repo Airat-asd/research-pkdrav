@@ -1,0 +1,37 @@
+.button-bages-group button {
+  border-radius: 0;
+  margin: 5px;
+  background-color: white;
+
+}
+
+.button-bages-group {
+  padding: 2rem !important;
+}
+
+.service-search-result .card {
+  margin: 5px;
+  width: 34rem;
+  height: 8rem;
+  cursor: pointer;
+}
+
+.service-search-result .card:hover {
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.service-search-result .card .card-title {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.service-icon {
+  padding: 1rem;
+}
+
+.red-text {
+  color: red
+}
+

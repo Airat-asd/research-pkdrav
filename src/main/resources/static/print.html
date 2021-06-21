@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Plain Swagger</title>
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+  <link href="css/dev.css" rel="stylesheet">
+  <link href="css/swagger-ui.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<script>
+  function createRequestObject() {
+    if (typeof XMLHttpRequest === 'undefined') {
+      XMLHttpRequest = function () {
+        try {
+          return new ActiveXObject("Msxml2.XMLHTTP.6.0");
+        } catch (e) {
+        }
+        try {
+          return new ActiveXObject("Msxml2.XMLHTTP.3.0");
+        } catch (e) {
+        }
+        try {
+          return new ActiveXObject("Msxml2.XMLHTTP");
+        } catch (e) {
+        }
+        try {
+          return new ActiveXObject("Microsoft.XMLHTTP");
+        } catch (e) {
+        }
+        throw new Error("This browser does not support XMLHttpRequest.");
+      };
+    }
+    return new XMLHttpRequest();
+  }
+
+  function processReqChange() {
+    // только при состоянии "complete"
+    if (req.readyState == 4) {
+      // для статуса "OK"
+      if (req.status == 200) {
+        var evalJs = "var swaggerDoc = " + req.responseText;
+        eval(evalJs);
+        show(swaggerDoc);
+        //console.log(req.responseText);
+        //console.log(JSON.parse(req.responseText));
+      } else {
+        alert("Не удалось получить данные:\n" +
+            req.statusText);
+      }
+    }
+  }
+
+  var req = createRequestObject();
+  req.open("GET", "/v2/api-docs", true);
+  req.onreadystatechange = processReqChange;
+  req.send(null);
+
+  function haveError() {
+    var doc = '<p> Ошибка запроса </p>';
+    document.getElementsByTagName('body')[0].innerHTML = doc;
+  }
+
+  function show(swagger) {
+    var title = swagger.info.title;
+    var description = swagger.info.description;
+    var doc = '';
+    var d = swagger.definitions;
+    var paths = swagger.paths;
+    var v = function (v) {
+      return v ? v : '';
+    };
+
+    doc += '<div class="container">';
+
+    doc += '<div id="swagger-ui">' +
+        '<div data-reactroot class="swagger-ui swagger-container">' +
+        '<div class="swagger-ui">' +
+        '<div class="information-container wrapper" style="padding-left:0px;padding-right:0px;">' +
+        '<section class="block col-12">' +
+        '<div class="info">' +
+        '<hgroup class="main">' +
+        '<h2 class="title">' +
+        `<b> ${swagger.info.title} </b>` +
+        `<small><pre class="version">${swagger.info.version}</pre></small>` +
+        '</h2>' +
+        '</hgroup>' +
+        '<div class="description">' +
+        '<div class="markdown">' +
+        `${description}` +
+        '</div>' +
+        '</div>' +
+        '</div>' +
+        '</section>' +
+        '</div>' +
+        '</div>' +
+        '</div>' +
+        '</div>';
+
+    for (var p in paths) {
+      if (paths.hasOwnProperty(p)) {
+
+        for (var m in paths[p]) {
+          if (paths[p].hasOwnProperty(m)) {
+            doc += '<h3 class="display-4"><b>' + m + '</b>&nbsp;' + p + '</h3>';
+            doc += '<p><b>' + paths[p][m].summary + '</b></p>';
+            paths[p][m].description && (doc += '<p>' + paths[p][m].description + '</p>');
+
+            doc += '<h4>Параметры запроса</h4>';
+            doc += '<table class="table table-sm table-striped">';
+            doc += '<tr><th>Наименование</th><th>Тип</th><th>Описание</th><th>Пример</th><th>Допустимые значения</th></tr>';
+            for (var par in paths[p][m].parameters) {
+              if (paths[p][m].parameters.hasOwnProperty(par)) {
+                doc += '<tr>';
+                doc += '<td>' + (paths[p][m].parameters[par].schema ?
+                    '<a href="' + paths[p][m].parameters[par].schema.$ref + '">'
+                    + paths[p][m].parameters[par].name + '</a>' :
+
+                    v(paths[p][m].parameters[par].name)) + ' </td>';
+                doc += '<td>' + v(paths[p][m].parameters[par].in) + ' </td>';
+                doc += '<td>' + v(paths[p][m].parameters[par].description) + ' </td>';
+                doc += '<td>' + v(paths[p][m].parameters[par]['x-example']) + ' </td>';
+                doc += '<td>' + v(paths[p][m].parameters[par].enum) + ' </td>';
+                doc += '</tr>';
+              }
+            }
+            doc += '</table>';
+            doc += '<h4>Ответ</h4>';
+            if (paths[p][m].responses['200'].schema && paths[p][m].responses['200'].schema.$ref) {
+              doc += '<p><a href="' + paths[p][m].responses['200'].schema.$ref + '">'
+                  + paths[p][m].responses['200'].schema.$ref.replace('#/definitions/', '')
+                  + '</a></p>';
+            }
+
+            if (paths[p][m].responses['200'].schema && paths[p][m].responses['200'].schema.items) {
+              doc += '<p><a href="' + paths[p][m].responses['200'].schema.items.$ref + '">List of '
+                  + paths[p][m].responses['200'].schema.items.$ref.replace('#/definitions/', '')
+                  + '</a></p>';
+            }
+          }
+        }
+        doc += '<hr/>';
+      }
+    }
+
+    doc += '<div style="padding: 100px"></div>';
+    doc += '<h1>Модели</h1>';
+
+    for (var p in d) {
+      if (d.hasOwnProperty(p)) {
+        doc += '<a name="/definitions/' + d[p].title + '"/>';
+        doc += '<h4>' + d[p].title + (d[p].description ? ' (' + d[p].description + ')' : '')
+            + '</h4>';
+        var prop = d[p].properties;
+        var required = d[p].required;
+
+        doc += '<table class="table table-sm .table-striped">';
+        doc += '<tr><th>Наименование</th><th>Тип</th><th>Описание</th><th>Пример</th><th>Допустимые значения</th></tr>';
+        for (var a in prop) {
+          if (prop.hasOwnProperty(a)) {
+            doc += '<tr>';
+            if (required != null && required.includes(a)) doc += '<td>' + a + '<span class="red-text">*</span>' + ' </td>';
+            else doc += '<td>' + a + ' </td>'
+            doc += '<td>' + (
+                prop[a].$ref
+                    ? '<a href="' + prop[a].$ref + '">' + prop[a].$ref.replace('#/definitions/', '')
+                    + '</a>'
+                    : (
+                        prop[a].items
+                            ? 'List &lt;' + (
+                            prop[a].items.$ref
+                                ? '<a href="' + prop[a].items.$ref + '">' + (prop[a].items.$ref.replace(
+                                '#/definitions/', '')) + '</a>'
+                                : prop[a].items.type
+                        ) + '&gt;'
+                            : (
+                                prop[a].type == 'object'
+                                    ? 'Map &lt;string, ' + prop[a].additionalProperties.type + '&gt;'
+                                    : prop[a].type
+                            )
+                    )
+            ) + ' </td>';
+            doc += '<td><pre>' + v(prop[a].description) + '</pre></td>';
+            doc += '<td>' + ((typeof v(prop[a].example)) == 'string' ? v(prop[a].example)
+                : JSON.stringify(v(prop[a].example))) + ' </td>';
+            doc += '<td>' + v(prop[a].enum) + ' </td>';
+            doc += '</tr>';
+          }
+        }
+        if (required != null) doc += '<tr><td class="red-text">* - обязательный параметр</td></tr>'
+        doc += '<table>';
+      }
+    }
+
+    doc += '</div>';
+    document.getElementsByTagName('body')[0].innerHTML = doc;
+  };
+
+</script>
+</body>
+</html>
