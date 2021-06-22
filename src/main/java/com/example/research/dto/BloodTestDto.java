@@ -1,33 +1,60 @@
 package com.example.research.dto;
 
-import com.example.research.entity.Patient;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.sql.Date;
 
-@Data
+@NoArgsConstructor
+@Setter
+@EqualsAndHashCode
+@ApiModel(description = "Исследование пациента")
 public class BloodTestDto {
     private String id;
-    @ApiModelProperty(value = "СНИЛС", required = true, example = "123-456-789 00")
-    @NotNull @NotBlank
-    private Patient patient;
-
-    @ApiModelProperty(value = "Дата исследования", required = true, example = "01-01-2021")
-    @NotNull @NotBlank
+    private String patientId;
     private Date date;
-
-    @ApiModelProperty(value = "Уровень гемоглобина", required = false, example = "123")
     private short HGB; //Уровень гемоглобина
-
-    @ApiModelProperty(value = "Уровень эритроцитов", required = true, example = "7.21")
     private float RBC; //Эритроциты
-
-    @ApiModelProperty(value = "Средний объем эритроцитов", required = true, example = "11")
     private short MCV; //Средний объем эритроцитов
-
-    @ApiModelProperty(value = "Средняя концентрация гемоглобина в эритроцитах", required = true, example = "9")
     private short MCHC; //Средняя концентрация гемоглобина в эритроцитах
+
+    @ApiModelProperty(position = 1, value = "Id исследования, генерируемый при создании исследования",
+            example = "97343f6b-4e5d-11ea-ad24-186024e83486")
+    public String getId() {
+        return this.id;
+    }
+
+    @ApiModelProperty(position = 2, value = "Id пациента", example = "97343f6b-4e5d-11ea-ad24-186024e83486")
+    public @NotNull @NotBlank String getPatientId() {
+        return this.patientId;
+    }
+
+    @ApiModelProperty(position = 3, value = "Дата исследования", required = true, example = "2000-11-01")
+    public @NotNull @NotBlank Date getDate() {
+        return this.date;
+    }
+
+    @ApiModelProperty(position = 4, value = "Уровень гемоглобина", example = "123")
+    public short getHGB() {
+        return this.HGB;
+    }
+
+    @ApiModelProperty(position = 5, value = "Уровень эритроцитов", example = "7.21")
+    public float getRBC() {
+        return this.RBC;
+    }
+
+    @ApiModelProperty(position = 6, value = "Средний объем эритроцитов", example = "11")
+    public short getMCV() {
+        return this.MCV;
+    }
+
+    @ApiModelProperty(position = 7, value = "Средняя концентрация гемоглобина в эритроцитах", example = "9")
+    public short getMCHC() {
+        return this.MCHC;
+    }
 }

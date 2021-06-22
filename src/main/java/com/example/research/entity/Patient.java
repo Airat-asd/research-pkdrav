@@ -16,8 +16,7 @@ import java.util.List;
 @ApiModel(description = "Пациент")
 public class Patient {
     @Id
-    @ApiModelProperty (value = "UUID, генерируемый при создании пациента", example = "97343f6b-4e5d-11ea-ad24-186024e83486")
-    @JsonIgnore
+    @ApiModelProperty(value = "UUID, генерируемый при создании пациента", example = "97343f6b-4e5d-11ea-ad24-186024e83486")
     private String id;
 
     @Column(unique = true)
@@ -28,27 +27,29 @@ public class Patient {
     private String lastName;
 
     @ApiModelProperty(value = "Имя", required = true, example = "Давид")
-    @NotNull @NotBlank
+    @NotNull
+    @NotBlank
     private String firstName;
 
     @ApiModelProperty(value = "Отчество", example = "Йеуды")
     private String middleName;
 
-    @ApiModelProperty(value = "Дата рождения",required = true, example = "2000-11-01")
-    @NotNull @NotBlank
+    @ApiModelProperty(value = "Дата рождения", required = true, example = "2000-11-01")
+    @NotNull
+    @NotBlank
     private Date dateOfBirth;
 
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private List<BloodTest> bloodTests = new ArrayList<>();
+    private List<BloodTest> bloodTestList = new ArrayList<>();
 
     public void addBloodTest(BloodTest bloodTest) {
-        bloodTests.add(bloodTest);
+        bloodTestList.add(bloodTest);
         bloodTest.addPatient(this);
     }
 
     public void removeBloodTest(BloodTest bloodTest) {
-        bloodTests.remove(bloodTest);
+        bloodTestList.remove(bloodTest);
         bloodTest.addPatient(null);
     }
 }
