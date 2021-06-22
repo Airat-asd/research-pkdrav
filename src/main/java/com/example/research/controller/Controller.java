@@ -1,7 +1,6 @@
 package com.example.research.controller;
 
 import com.example.research.dto.BloodTestDto;
-import com.example.research.entity.BloodTest;
 import com.example.research.entity.Patient;
 import io.swagger.annotations.*;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,14 +41,14 @@ public interface Controller {
                                        BloodTestDto bloodTestDto);
 
     @ApiOperation(value = "Получение списка исследований по пациенту")
-    public List<BloodTest> getAllResearchPatient(@ApiParam(value = "Id пациента", required = true) @Valid @RequestBody
-            String id);
+    public List<BloodTestDto> getAllResearchPatient(@ApiParam(value = "Id пациента", required = true) @Valid @RequestBody
+                                                            String id);
 
     @ApiOperation(value = "Редактирование исследования")
     public String updateResearch(@ApiParam(value = "Редактируемое исследование", required = true) @Valid @RequestBody
-            BloodTestDto bloodTestDto);
+                                         BloodTestDto bloodTestDto);
 
     @ApiOperation(value = "Удаление исследования")
     public String removeResearch(@ApiParam(value = "Id удаляемого исследования", required = true) @Valid @RequestBody
-            String id);
+                                         String id);
 }

@@ -20,6 +20,6 @@ public class UUID {
 
         EthernetAddress address = EthernetAddress.fromInterface();
         TimeBasedGenerator uuidGenerator = Generators.timeBasedGenerator(address);
-        return  uuidGenerator.generate().toString();
+        return uuidGenerator.generate().toString();
     }
 }

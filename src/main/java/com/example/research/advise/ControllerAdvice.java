@@ -87,5 +87,4 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
             HttpStatus.NOT_FOUND
         );
     }
-
 }

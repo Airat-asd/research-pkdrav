@@ -18,6 +18,6 @@ public class BloodTest {
     private short MCHC; //Средняя концентрация гемоглобина в эритроцитах
 
     public void addPatient(Patient patient) {
-        this.patient=patient;
+        this.patient = patient;
     }
 }
